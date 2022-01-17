@@ -1,35 +1,25 @@
 const express = require("express");
-const multer = require("multer");
+
 const checkAuth = require("../middelware/check-auth");
 const productController = require("../controller/productCTRL");
+require("../util/cloudinary");
+// const cloudinary = require("cloudinary").v2;
+// const { CloudinaryStorage } = require("multer-storage-cloudinary");
 
+// cloudinary.config({
+//   cloud_name: "dg1rudz5a",
+//   api_key: "516435253184156",
+//   api_secret: "k0Gvn4AavDPNaOGp8ZLWQdpnAEY",
+// });
 const Router = express.Router();
-
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "./uploads/");
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = new Date().toISOString().replace(/:/g, "-");
-    cb(null, uniqueSuffix + file.originalname);
-  },
-});
-
-const fileFilter = (req, file, cb) => {
-  let ext = file.mimetype;
-  if (ext == "image/jpeg" || ext == "image/jpg" || ext == "image/png") {
-    cb(null, true);
-  } else {
-    cb(null, false);
-  }
-};
-const upload = multer({
-  storage: storage,
-  limits: {
-    fileSize: 1024 * 1024 * 5,
-  },
-  fileFilter: fileFilter,
-});
+// var storage = new CloudinaryStorage({
+//   cloudinary: cloudinary,
+//   folder: "demo",
+//   allowedFormats: ["jpg", "png"],
+// });
+// const upload = multer({
+//   storage: storage,
+// });
 
 Router.get("/", productController.products_get_all);
 Router.get("/:productId", productController.products_get_one);

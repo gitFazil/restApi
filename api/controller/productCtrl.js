@@ -1,6 +1,7 @@
 const Product = require("../models/product");
 const mongoose = require("mongoose");
 const productURL = "http://localhost:5000/products/";
+const cloudinary = require("cloudinary").v2;
 
 exports.products_get_all = (req, res) => {
   Product.find()
@@ -33,27 +34,40 @@ exports.products_get_all = (req, res) => {
 };
 
 exports.products_create = (req, res) => {
-  const product = new Product({
-    _id: new mongoose.Types.ObjectId(),
-    name: req.body.name,
-    price: req.body.price,
-    productImg: req.file.destination + req.file.filename,
-  });
-  product
-    .save()
-    .then((result) => {
-      res.status(200).json({
-        data: result,
-        request: {
-          type: "GET",
-          description: "get all products",
-          url: productURL,
-        },
-      });
-    })
-    .catch((err) => {
-      res.status(500).json({ error: err });
-    });
+  cloudinary.uploader.upload(
+    req.file.path,
+
+    function (error, result) {
+      if (result) {
+        const product = new Product({
+          _id: new mongoose.Types.ObjectId(),
+          name: req.body.name,
+          price: req.body.price,
+          productImg: result.url,
+        });
+        product
+          .save()
+          .then((result) => {
+            res.status(200).json({
+              data: result,
+              request: {
+                type: "GET",
+                description: "get all products",
+                url: productURL,
+              },
+            });
+          })
+          .catch((err) => {
+            res.status(402).json({ msg: "post", error: err });
+          });
+      } else {
+        res.status(500).json({
+          packeg: "clodinary",
+          error: error,
+        });
+      }
+    }
+  );
 };
 
 exports.products_get_one = (req, res) => {
@@ -75,7 +89,7 @@ exports.products_get_one = (req, res) => {
       res.status(200).json(response);
     })
     .catch((err) => {
-      res.status(500).json({
+      res.status(402).json({
         error: err,
       });
     });
@@ -93,7 +107,7 @@ exports.products_update = (req, res) => {
       res.status(200).json("update successfully");
     })
     .catch((err) => {
-      res.status(500).json({ error: err });
+      res.status(402).json({ error: err });
     });
 };
 exports.products_delete = (req, res) => {
@@ -113,5 +127,5 @@ exports.products_delete = (req, res) => {
         },
       });
     })
-    .catch((err) => res.status(500).json({ error: err }));
+    .catch((err) => res.status(402).json({ error: err }));
 };

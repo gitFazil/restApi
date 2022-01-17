@@ -14,8 +14,7 @@ mongoose.connect(process.env.mongodb);
 app.use(morgan("dev"));
 //body parser
 
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+app.use(express.json());
 app.use((req, res, next) => {
   req.header("Access-Control-Allow-Orgin", "*");
   req.header(
