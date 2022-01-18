@@ -1,7 +1,7 @@
 const Product = require("../models/product");
 const mongoose = require("mongoose");
 const productURL = "http://localhost:5000/products/";
-const cloudinary = require("cloudinary").v2;
+const cloudinary = require("../util/cloudinary");
 
 exports.products_get_all = (req, res) => {
   Product.find()
@@ -36,6 +36,7 @@ exports.products_get_all = (req, res) => {
 exports.products_create = (req, res) => {
   cloudinary.uploader.upload(
     req.file.path,
+    { folder: "restApiUpload" },
 
     function (error, result) {
       if (result) {

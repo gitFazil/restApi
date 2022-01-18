@@ -2,7 +2,7 @@ const express = require("express");
 
 const checkAuth = require("../middelware/check-auth");
 const productController = require("../controller/productCTRL");
-require("../util/cloudinary");
+const upload = require("../util/multer");
 // const cloudinary = require("cloudinary").v2;
 // const { CloudinaryStorage } = require("multer-storage-cloudinary");
 
